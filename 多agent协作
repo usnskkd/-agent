@@ -1,1 +1,146 @@
 
+# 多 Agent 协同运营自动化系统
+
+当前主实现栈为 `Vue 3 + Spring Boot`，并已支持打包成单个可运行 MVP。
+
+系统包含：
+
+- 多 agent 运营任务编排
+- 任务创建、执行、查看
+- 自动化周期执行
+- H2 本地持久化
+- Vue 3 控制台
+
+## 项目描述
+
+### 1. 项目解决的核心痛点
+
+传统运营执行通常存在几个明显问题：
+
+- 需求从目标到落地中间链路长，靠人手在策划、调研、文案、审核、发布之间反复传递
+- 运营动作分散在不同人和不同工具里，执行状态不透明，容易遗漏关键环节
+- 重复性任务很多，例如活动排期、内容生成、基础审查和周期性执行，人工成本高
+- 运营结果难以标准化沉淀，同类任务每次都要从头开始拆解和组织
+
+这个项目的核心价值，是把一个运营任务拆成多个明确角色的 agent，让系统自动完成任务编排、内容生成、审核判断和发布计划输出，最终把“人工串行推进”变成“系统协同流转”。
+
+### 2. 核心逻辑流
+
+系统主流程如下：
+
+1. 用户在前端输入运营目标、渠道、人群、预算等任务信息
+2. 后端创建任务并保存到本地数据库
+3. 用户触发执行后，编排器按固定顺序调起多个 agent
+4. `planner` 先拆解目标和阶段
+5. `researcher` 基于渠道和人群生成策略补充
+6. `copywriter` 生成运营文案和行动建议
+7. `reviewer` 对输出内容做质量与风险检查
+8. `publisher` 根据审核结果生成发布计划和最终状态
+9. 系统把完整执行结果写入执行记录，返回前端展示
+10. 如果配置了自动化任务，调度器会按周期重复触发同一任务执行
+
+简化理解就是：
+
+`任务输入 -> agent 编排执行 -> 结果审查 -> 发布计划输出 -> 自动化周期运行`
+
+## 目录结构
+
+```text
+backend/   Spring Boot 后端
+frontend/  Vue 3 前端
+app/       旧版 Python Demo，保留作参考
+data/      本地数据文件
+```
+
+## 一键打包 MVP
+
+```bash
+cd /Users/mac/Downloads/多agent协同运营自动化
+chmod +x scripts/package-mvp.sh scripts/run-mvp.sh
+./scripts/package-mvp.sh
+```
+
+打包完成后产物在：
+
+- `dist/mvp/app.jar`
+- `dist/mvp/run-mvp.sh`
+- `dist/ops-automation-mvp.zip`
+
+运行打包后的 MVP：
+
+```bash
+cd /Users/mac/Downloads/多agent协同运营自动化/dist/mvp
+./run-mvp.sh
+```
+
+访问：
+
+- `http://127.0.0.1:8080`
+
+## 开发模式启动
+
+### 后端启动
+
+要求：
+
+- JDK 17+
+- Maven 3.9+
+
+启动命令：
+
+```bash
+cd backend
+mvn spring-boot:run
+```
+
+启动后地址：
+
+- 接口：`http://127.0.0.1:8080/api`
+- H2 控制台：`http://127.0.0.1:8080/h2-console`
+
+### 前端启动
+
+要求：
+
+- Node.js 18+
+
+启动命令：
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+启动后访问：
+
+- `http://127.0.0.1:5173`
+
+## 内置 Agent
+
+- `planner`：目标拆解与排期
+- `researcher`：渠道研究与策略补充
+- `copywriter`：文案生成
+- `reviewer`：风控与质量审查
+- `publisher`：发布编排
+
+## 主要接口
+
+- `GET /api/health`
+- `GET /api/tasks`
+- `POST /api/tasks`
+- `POST /api/tasks/{id}/run`
+- `GET /api/executions`
+- `GET /api/automations`
+- `POST /api/automations`
+
+## 说明
+
+当前 agent 输出是规则驱动的可运行版本，便于你先把系统跑起来。后续如果你要接真实大模型，只需要把后端的 [AgentOrchestrator.java](/Users/mac/Downloads/多agent协同运营自动化/backend/src/main/java/com/multiagent/ops/service/AgentOrchestrator.java:1) 替换成模型调用逻辑即可。
+
+打包脚本会自动：
+
+- 构建 Vue 3 前端
+- 将静态资源复制到 Spring Boot
+- 生成单个 `jar`
+- 输出可直接交付的 zip 包
