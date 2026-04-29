@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>多 Agent 协同运营自动化系统</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <aside class="hero-panel">
+      <p class="eyebrow">Operations Automation</p>
+      <h1>多 Agent 协同运营自动化系统</h1>
+      <p class="hero-text">
+        规划、研究、文案、审查、发布五类 agent 串联执行，让运营任务从“需求描述”直接流转到“可执行计划”。
+      </p>
+      <div class="status-card">
+        <span>运行模式</span>
+        <strong>本地可运行 Demo</strong>
+      </div>
+    </aside>
+
+    <main class="main-panel">
+      <section class="card">
+        <div class="section-head">
+          <h2>创建任务</h2>
+          <button id="refreshBtn" class="ghost-btn">刷新</button>
+        </div>
+        <form id="taskForm" class="grid-form">
+          <input name="name" placeholder="任务名称" required />
+          <input name="goal" placeholder="核心目标" required />
+          <input name="channel" placeholder="渠道，例如 小红书/公众号/抖音" required />
+          <input name="audience" placeholder="目标人群" required />
+          <input name="budget" placeholder="预算，例如 5k/月" value="small" />
+          <button type="submit">创建任务</button>
+        </form>
+      </section>
+
+      <section class="card">
+        <div class="section-head">
+          <h2>任务列表</h2>
+        </div>
+        <div id="taskList" class="list"></div>
+      </section>
+
+      <section class="card">
+        <div class="section-head">
+          <h2>执行记录</h2>
+        </div>
+        <div id="executionList" class="list"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
